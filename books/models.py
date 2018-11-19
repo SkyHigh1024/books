@@ -22,7 +22,7 @@ class BooksManager(models.Manager):
         elif sort == 'price':
             order_by = ('price',)
         else:
-            brder_by = ('pk',)
+            order_by = ('pk',)
         
         books_li = self.filter(type_id=type_id).order_by(*order_by)
         if limit:

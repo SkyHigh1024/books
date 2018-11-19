@@ -1,48 +1,50 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title>尚硅谷书城-商品详情</title>
-	<link rel="stylesheet" type="text/css" href="css/reset.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}书店--首页{% endblock title %}
+{% block topfiles %}
+<script>
+$(function(){
+    uodate_total_price()
+    function uodate_total_price(){
+        books_price = $('.show_pirze').children('em').text()
+        books_count = $('.num_show').val()
+        
+        books_price = parseFloat(books_price)
+        books_count = parseInt(books_count)
+        total_price = books_price * books_count
+    
+        $('.total').children('em').text(total_price.toFixed(2)+'元')
+}
+    $('.add').click(function(){
+        books_count = $('.num_show').val()
+        books_count = parseInt(books_count)+1
+        $('.num_show').val(books_count)
+        uodate_total_price()
 
-</head>
-<body>
-	<div class="header_con">
-		<div class="header">
-			<div class="welcome fl">欢迎来到尚硅谷!</div>
-			<div class="fr">
-				<div class="login_info fl">
-					欢迎您：<em>张 山</em>
-				</div>
-				<div class="login_btn fl">
-					<a href="login.html">登录</a>
-					<span>|</span>
-					<a href="register.html">注册</a>
-				</div>
-				<div class="user_link fl">
-					<span>|</span>
-					<a href="user_center_info.html">用户中心</a>
-					<span>|</span>
-					<a href="cart.html">我的购物车</a>
-					<span>|</span>
-					<a href="user_center_order.html">我的订单</a>
-				</div>
-			</div>
-		</div>		
-	</div>
 
-	<div class="search_bar clearfix">
-		<a href="index.html" class="logo fl"><img src="images/logo.png" style="width: 160px; height: 53px;"></a>
-		<div class="search_con fl">
-			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
-			<input type="button" class="input_btn fr" name="" value="搜索">
-		</div>
-		<div class="guest_cart fr">
-			<a href="cart.html" class="cart_name fl">我的购物车</a>
-			<div class="book_count fl" id="show_count">1</div>
-		</div>
-	</div>
+})
+    $('.minus').click(function(){
+        books_count = $('.num_show').val()
+        books_count = parseInt(books_count)-1
+        if (books_count == 0){
+            books_count = 1
+}
+        $('.num_show').val(books_count)
+        uodate_total_price()
+})
+    $('.num_show').blur(function(){
+        books_count = $(this).val()
+        if (isNaN(books_count) || books_count.trim().lenth == 0 || parseInt(books_count) <0 ){
+            books_count = 1
+}
+        $('.num_show').val(parseInt(books_count))
+        uodate_total_price()
+
+})
+})
+ </script> 
+{% endblock topfiles %}
+{% block body %}
 
 	<div class="navbar_con">
 		<div class="navbar clearfix">
@@ -70,20 +72,20 @@
 
 	<div class="breadcrumb">
 		<a href="#">全部分类</a>
-		<span>></span>
+		<span></span>
 		<a href="#">Python</a>
-		<span>></span>
+		<span></span>
 		<a href="#">商品详情</a>
 	</div>
 
 	<div class="book_detail_con clearfix">
-		<div class="book_detail_pic fl"><img src="images/book_detail.jpg"></div>
+		<div class="book_detail_pic fl"><img src="{% static books.image %}"></div>
 
 		<div class="book_detail_list fr">
 			<h3>{{books.name }}</h3>
-            <p>{{ books,desc }}</p>
+            <p>{{ books.desc }}</p>
 			<div class="prize_bar">
-				<span class="show_pirze">¥<em>{{ bokks.price }}</em></span>
+				<span class="show_pirze">¥<em>{{ books.price }}</em></span>
 				<span class="show_unit">单  位：{{ books.unit }}</span>
 			</div>
 			<div class="book_num clearfix">
@@ -96,8 +98,9 @@
 			</div>
 			<div class="total">总价：<em>100元</em></div>
 			<div class="operate_btn">
+                {% csrf_token %}
 				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+				<a href="javascript:;" books_id="{{ books.id }}" class="add_cart" id="add_cart">加入购物车</a>				
 			</div>
 		</div>
 	</div>
@@ -111,14 +114,9 @@
 					<li>
 						<a href="{% url 'books:detail' books_id=book.id %}"><img src="{% static book.image %}"></a>
 						<h4><a href="{% url 'books:detail' books_id=book.id %}">{{book.name}}</a></h4>
-						<div class="prize">￥{{book.price}}</div>
+						<div class="prize">￥{{ book.price }}</div>
 					</li>
                 {% endfor %}
-					<li>
-						<a href="#"><img src="images/book/book002.jpg"></a>
-						<h4><a href="#">Python学习手册</a></h4>
-						<div class="prize">￥16.80</div>
-					</li>
 				</ul>
 			</div>
 		</div>
@@ -132,31 +130,35 @@
 			<div class="tab_content">
 				<dl>
 					<dt>商品详情：</dt>
-					<dd>《计算机程序设计艺术》系列是公认的计算机科学领域经典之作，深入阐述了程序设计理论，对计算机领域的发展有着极为深远的影响。本书是该系列的第 1 卷，讲解基本算法，其中包含了其他各卷都需用到的基本内容。本卷从基本概念开始，然后讲述信息结构，并辅以大量的习题及答案。 </dd>
+                    <dd> {{ books.detail | safe }}</dd>
 				</dl>
 			</div>
 
 		</div>
 	</div>
-
-	<div class="footer">
-		<div class="foot_link">
-			<a href="#">关于我们</a>
-			<span>|</span>
-			<a href="#">联系我们</a>
-			<span>|</span>
-			<a href="#">招聘人才</a>
-			<span>|</span>
-			<a href="#">友情链接</a>		
-		</div>
-		<p>CopyRight © 2016 北京尚硅谷信息技术有限公司 All Rights Reserved</p>
-		<p>电话：010-****888    京ICP备*******8号</p>
-	</div>
-	<div class="add_jump"></div>
-
-	<script type="text/javascript" src="js/jquery-1.12.2.js"></script>
-	<script type="text/javascript">
-	</script>
-	
-</body>
-</html>
+    <div class="add_jump"></div>
+{% endblock body %}
+{% block bottomfiles %}
+<script>
+    $('#add_cart').click(function(){
+        var books_id = $(this).attr('books_id');
+        var books_count = $('.num_show').val();
+        var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+        var params = {
+            'books_id':books_id,
+            'books_count':books_count,
+            'csrfmiddlewaretoken':csrf
+    
+            }
+        $.post('/cart/add/',params,function(data){
+            if(data.res == 5){
+                var count = $('#show_count').html();
+                var count = parseInt(count) + parseInt(books_count);
+                $('#show_count').html(count);
+        } else {
+            alert(data.errmsg)
+        }
+    })
+})
+</script>
+{% endblock bottomfiles %}

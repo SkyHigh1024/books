@@ -25,7 +25,7 @@ SECRET_KEY = 't8gthtz(fe1f(j&t$csh5p75-pdq+5-p8whz+br4t4_=ku6)#g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'users',
     'books',
     'tinymce',
+    'order',
+    'haystack',
 ]
 
 MIDDLEWARE = [
@@ -136,4 +138,62 @@ TINYMCE_DEFAULT_CONFIG = {
     'width':600,
     'height':400,
 }
+CACHES = {
+    "default":{
+        "BACKEND":"django_redis.cache.RedisCache",
+        "LOCATION":"redis://127.0.0.1:6379/2",
+        "OPTIONS":{
+            "LCIENT_CLASS":"dhango_redis.client.DefaultClient",
+            "PASSWORD":''        
+}                        
+}
+}
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = "default"
 
+
+ALIPAY_URL = "https://openapi.alipaydev.com/gateway.do"
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": ""
+        }
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.126.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'gaotian15603379727@163.com'
+EMAIL_HOST_PASSWORD = 'asd123'
+EMAIL_FROM = 'gaotian15603379727@163.com'
+
+
+
+
+
+
+
+
+
+
+
+HAYSTACK_CONNECTIONS = {
+    'default':{
+        'ENGINE':'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        'PATH':os.path.join(BASE_DIR,'whoose_index'),
+}
+}
+
+HAYSTACK_SINGNAI_PROCESSOR = 'haystack.sigbals.RealtimeSignalProcessor'
+
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 6

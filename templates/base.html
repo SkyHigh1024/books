@@ -1,4 +1,3 @@
-CTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 {% load staticfiles %}
 <head>
@@ -9,7 +8,7 @@ CTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR
     <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/slide.js' %}"></script>
-    {% block topfules %}{% endblock topfiles %}
+    {% block topfiles %}{% endblock topfiles %}
 </head>
 <body>
 {% block hander_con%}
@@ -32,11 +31,11 @@ CTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR
                 {% endif %}
                 <div class="user_link fl">
                     <span>|</span>
-                    <a href="user_center_info.html">用户中心</a>
+                    <a href="{% url 'user:user'%}">用户中心</a>
                     <span>|</span>
-                    <a href="cart.html">我的购物车</a>
+                    <a href="{% url 'cart:show' %}">我的购物车</a>
                     <span>|</span>
-                    <a href="user_center_order.html">我的订单</a>
+                    <a href="{% url 'order:place' %}">我的订单</a>
                 </div>
             </div>
         </div>      
@@ -44,13 +43,13 @@ CTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR
 {% endblock hander_con %}
 {% block search_bar %}
     <div class="search_bar clearfix">
-        <a href="{% url  'books:index'%}" class="logo fl"><img src="{% static 'images/logo.png' %} style="width: 160px; height: 53px;"></a>
+        <a href="{% url  'books:index'%}" class="logo fl"><img src="{% static 'images/logo.png' %}" style="width: 160px; height: 53px;"></a>
         <div class="search_con fl">
             <input type="text" class="input_text fl" name="" placeholder="搜索商品">
             <input type="button" class="input_btn fr" name="" value="搜索">
         </div>
         <div class="guest_cart fr">
-            <a href="#" class="cart_name fl">我的购物车</a>
+            <a href="{% url 'cart:show'%}" class="cart_name fl">我的购物车</a>
             <div class="book_count fl" id="show_count">1</div>
         </div>
     </div>
@@ -69,6 +68,14 @@ CTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR
         <p>CopyRight © 2016 北京尚硅谷信息技术有限公司 All Rights Reserved</p>
         <p>电话：010-****888    京ICP备*******8号</p>
     </div>
+    {% block cart_count %}
+        <script>
+            $.get('/cart/count/',function(data){
+                $('#show_count').html(data.res)
+
+})
+        </script>
+    {% endblock cart_count %}
     {% block bottom %}{% endblock bottom%}
     {% block bottomfiles %}{% endblock bottomfiles  %}
 </body>
